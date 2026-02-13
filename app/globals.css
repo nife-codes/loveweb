@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +11,23 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+  .font-body {
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .paper-texture {
+    background-color: hsl(var(--paper));
+    background-image: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  .text-ink {
+    color: hsl(var(--ink));
+  }
+  .text-ink-light {
+    color: hsl(var(--ink-light));
   }
 }
 
@@ -47,6 +66,13 @@ body {
     --sidebar-accent-foreground: 20 30% 20%;
     --sidebar-border: 30 15% 82%;
     --sidebar-ring: 20 25% 32%;
+
+    /* Whispered Words Variables */
+    --paper: 35 35% 90%;
+    --paper-dark: 30 25% 82%;
+    --ink: 25 35% 22%;
+    --ink-light: 25 20% 50%;
+    --warm-glow: 30 50% 70%;
   }
 }
 

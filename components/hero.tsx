@@ -33,19 +33,19 @@ export function Hero() {
 
 
       <div className="mt-12">
-        <button
+        <a
+          href="/whispered-words"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="group relative overflow-hidden rounded-full border border-primary/20 bg-primary/5 px-10 py-3.5 font-sans text-sm font-light tracking-[0.2em] uppercase text-primary transition-all duration-700 ease-out hover:border-primary/40 hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:px-12 sm:py-4 sm:text-base"
+          className="group relative overflow-hidden rounded-full border border-primary/20 bg-primary/5 px-10 py-3.5 font-sans text-sm font-light tracking-[0.2em] uppercase text-primary transition-all duration-700 ease-out hover:border-primary/40 hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:px-12 sm:py-4 sm:text-base inline-block"
           aria-label="Continue"
         >
           <span className="relative z-10 transition-all duration-700">Continue</span>
           <span
-            className={`absolute inset-0 -z-0 bg-primary transition-transform duration-700 ease-out ${
-              isHovered ? "translate-y-0" : "translate-y-full"
-            }`}
+            className={`absolute inset-0 -z-0 bg-primary transition-transform duration-700 ease-out ${isHovered ? "translate-y-0" : "translate-y-full"
+              }`}
           />
-        </button>
+        </a>
       </div>
 
 

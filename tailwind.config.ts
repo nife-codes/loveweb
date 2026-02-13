@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 const config: Config = {
   darkMode: ['class'],
@@ -9,6 +10,13 @@ const config: Config = {
     '*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       colors: {
         background: 'hsl(var(--background))',
@@ -65,6 +73,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
         script: ['var(--font-dancing-script)', 'cursive'],
+        display: ['Playfair Display', 'serif'],
+        body: ['Cormorant Garamond', 'serif'],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -95,6 +105,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [tailwindcssAnimate],
 }
 export default config
