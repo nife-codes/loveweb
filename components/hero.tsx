@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { Heart } from "lucide-react"
 
+import Link from "next/link"
+
 export function Hero() {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -33,7 +35,7 @@ export function Hero() {
 
 
       <div className="mt-12">
-        <a
+        <Link
           href="/whispered-words"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
@@ -45,7 +47,7 @@ export function Hero() {
             className={`absolute inset-0 -z-0 bg-primary transition-transform duration-700 ease-out ${isHovered ? "translate-y-0" : "translate-y-full"
               }`}
           />
-        </a>
+        </Link>
       </div>
 
 
