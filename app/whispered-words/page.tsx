@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import LoveLetter from "@/components/LoveLetter"
 import NextSection from "@/components/NextSection"
-import PoetryBook from "@/components/PoetryBook"
+import LetterCarousel from "@/components/LetterCarousel"
 import { GalleryOverlay } from "@/components/carousel/GalleryOverlay"
 
 type View = "letter" | "next" | "poetry" | "gallery"
@@ -43,7 +43,7 @@ export default function WhisperedWordsPage() {
                         transition={{ duration: 0.8 }}
                         className="fixed inset-0 z-50 bg-background"
                     >
-                        <PoetryBook onBack={() => setView("next")} />
+                        <LetterCarousel onBack={() => setView("next")} />
                     </motion.div>
                 )}
 
