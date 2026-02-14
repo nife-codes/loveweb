@@ -26,7 +26,7 @@ const galleryItems: GalleryItem[] = [
         type: "video",
         src: "/gallery/most-adore.mp4",
         title: "Most Adored",
-        subtitle: "This is my favorite.",
+        subtitle: "This is my favorite",
     },
     {
         id: 3,
@@ -53,8 +53,8 @@ const galleryItems: GalleryItem[] = [
         id: 7,
         type: "video",
         src: "/gallery/first-ever-video.mp4",
-        title: "Our First Video",
-        subtitle: "The start of our story recorded",
+        title: "First Video You Sent",
+        subtitle: "This means so much to me.",
     },
 ]
 
