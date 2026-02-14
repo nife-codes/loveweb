@@ -19,7 +19,7 @@ const galleryItems: GalleryItem[] = [
         type: "video",
         src: "/gallery/adore.mp4",
         title: "Adore",
-        subtitle: "A photo I absolutely adore",
+        subtitle: "A video I absolutely adore",
     },
     {
         id: 2,
