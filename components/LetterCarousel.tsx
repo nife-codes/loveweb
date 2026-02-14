@@ -77,49 +77,67 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
                         onDragEnd={onDragEnd}
                         className="w-full px-2"
                     >
-                        <LetterCard
-                            poem={rawPoems[activeIndex]}
-                            index={activeIndex}
-                            total={count}
-                        />
-                    </motion.div>
-                </AnimatePresence>
+// ... imports
+import { useRef } from "react" 
+// Ensure useRef is imported
 
-                {/* Dots Indicator */}
-                <div className="absolute bottom-8 flex gap-2">
-                    {rawPoems.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`w-2 h-2 rounded-full transition-colors duration-300 ${i === activeIndex ? "bg-red-500 box-shadow-glow" : "bg-white/30"
-                                }`}
-                        />
-                    ))}
-                </div>
+// ... LetterCarousel component ...
 
-                {/* Swipe Instruction */}
-                <motion.div
+// Inside LetterCarousel return:
+// ...
+                        <LetterCard 
+                            poem={rawPoems[activeIndex]} 
+                            index={activeIndex} 
+                            total={count} 
+                            onSwipeDown={onBack}
+                        />
+// ...
+
+// Bottom text:
+                <motion.div 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 0.6, y: 0 }}
                     transition={{ delay: 1, duration: 1 }}
-                    className="absolute bottom-2 text-white/40 text-xs font-sans tracking-widest uppercase"
+                    className="absolute bottom-2 text-white/40 text-[10px] md:text-xs font-sans tracking-widest uppercase text-center"
                 >
-                    Swipe to read next letter
+                    Swipe L/R to read • Swipe Down to close
                 </motion.div>
             </div>
         </div>
     )
 }
 
-function LetterCard({ poem, index, total }: { poem: any, index: number, total: number }) {
+function LetterCard({ poem, index, total, onSwipeDown }: { poem: any, index: number, total: number, onSwipeDown: () => void }) {
+    const scrollRef = useRef<HTMLDivElement>(null)
+    const touchStart = useRef<number | null>(null)
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        touchStart.current = e.targetTouches[0].clientY
+    }
+
+    const onTouchEnd = (e: React.TouchEvent) => {
+        if (touchStart.current === null) return
+        const touchEnd = e.changedTouches[0].clientY
+        const distance = touchEnd - touchStart.current
+
+        // Check for Swipe Down (> 50px)
+        if (distance > 50) {
+            // Only trigger if we are at the top of the scroll
+            if (scrollRef.current && scrollRef.current.scrollTop <= 0) {
+                onSwipeDown()
+            }
+        }
+        touchStart.current = null
+    }
+
     return (
         <div className="relative w-full p-4 flex items-center justify-center">
-
+            
             {/* Shadow Container */}
             <div className="relative w-full bg-[#fdfbf7] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] transform rotate-0 transition-transform hover:scale-[1.01] duration-500">
-
+                
                 {/* Scalloped Edge Mask */}
-                {/* We use a radial gradient mask to create the stamp perforation effect */}
-                <div
+                <div 
                     className="absolute inset-0 bg-[#fdfbf7] -z-10"
                     style={{
                         maskImage: "radial-gradient(circle, transparent 6px, black 6.5px)",
@@ -132,18 +150,23 @@ function LetterCard({ poem, index, total }: { poem: any, index: number, total: n
                         WebkitMaskRepeat: "repeat",
                     }}
                 />
-
-                {/* Main Card Content */}
-                <div className="relative z-10 w-full h-full p-6 md:p-10 flex flex-col gap-6 min-h-[60vh] max-h-[75vh] overflow-y-auto no-scrollbar bg-[#fdfbf7]">
-
+                
+                {/* Main Card Content with Touch Listeners */}
+                <div 
+                    ref={scrollRef}
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
+                    className="relative z-10 w-full h-full p-6 md:p-10 flex flex-col gap-6 min-h-[60vh] max-h-[75vh] overflow-y-auto no-scrollbar bg-[#fdfbf7]"
+                >
+                    
                     {/* Paper Texture Overlay */}
                     <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] pointer-events-none" />
 
                     {/* Header Section */}
-                    <div className="relative border-b-2 border-double border-red-900/20 pb-4 flex justify-between items-start">
-
+                    <div className="relative border-b-2 border-double border-red-900/20 pb-4 flex justify-between items-start shrink-0">
+                        
                         <div className="flex flex-col gap-2">
-                            {/* Decorative header text */}
+                             {/* Decorative header text */}
                             <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#8b0000] tracking-widest uppercase" style={{ fontFamily: "Georgia, serif" }}>
                                 A Love Poem
                             </h1>
@@ -153,22 +176,22 @@ function LetterCard({ poem, index, total }: { poem: any, index: number, total: n
 
                         {/* Postage Stamps */}
                         <div className="flex gap-2 transform rotate-2">
-                            <div className="w-14 h-16 bg-[#e8dac9] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
+                             <div className="w-14 h-16 bg-[#e8dac9] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
                                 <Heart className="w-6 h-6 text-red-700 fill-red-700/20" />
                                 <span className="text-[6px] font-bold text-red-900 mt-1 uppercase tracking-wider">Love Mail</span>
                                 <div className="absolute -right-2 -bottom-2 opacity-30 text-[8px] font-mono text-black rotate-[-45deg]">14 CENTS</div>
-                            </div>
-                            <div className="w-14 h-16 bg-[#fae3e3] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden -rotate-6 mt-1">
+                             </div>
+                             <div className="w-14 h-16 bg-[#fae3e3] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden -rotate-6 mt-1">
                                 <Mail className="w-6 h-6 text-red-700" />
                                 <span className="text-[6px] font-bold text-red-900 mt-1 uppercase tracking-wider">Air Post</span>
-                            </div>
+                             </div>
                         </div>
                     </div>
 
                     {/* Poem Body */}
                     <div className="flex-1 flex flex-col items-center justify-center py-4 relative">
                         {/* Title of Poem */}
-                        <div className="mb-6 relative">
+                        <div className="mb-6 relative shrink-0">
                             <h2 className="text-2xl md:text-3xl font-serif text-[#5a0000] text-center font-bold italic relative z-10" style={{ fontFamily: "Georgia, serif" }}>
                                 {poem.title}
                             </h2>
@@ -176,7 +199,7 @@ function LetterCard({ poem, index, total }: { poem: any, index: number, total: n
                             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-red-900/40 to-transparent" />
                         </div>
 
-                        {/* Poem Text - Cursive (Dancing Script or similar) */}
+                        {/* Poem Text - Cursive */}
                         <div className="font-script text-xl md:text-2xl leading-loose text-center text-[#4a0404] w-full max-w-lg mx-auto drop-shadow-sm">
                             {poem.lines.map((line: string, i: number) => {
                                 if (line === PAGE_BREAK) return null
@@ -189,8 +212,8 @@ function LetterCard({ poem, index, total }: { poem: any, index: number, total: n
                         </div>
                     </div>
 
-                    {/* Footer */}
-                    <div className="mt-auto pt-6 border-t border-red-900/10 flex justify-between items-end relative">
+                    {/* Footer - shrink-0 to prevent squashing */}
+                    <div className="mt-auto pt-6 border-t border-red-900/10 flex justify-between items-end relative shrink-0">
                         <div className="flex flex-col">
                             <span className="font-script text-2xl md:text-3xl text-red-700 rotate-[-2deg]">
                                 Happy Valentine's Day
