@@ -40,27 +40,30 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
             <button
                 onClick={onBack}
                 className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
+                aria-label="Close"
             >
                 <X className="w-6 h-6" />
             </button>
 
+            {/* Navigation Arrows (Fixed to Screen Edges to separate from paper) */}
+            <button
+                onClick={handlePrev}
+                className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 p-4 rounded-full bg-white/5 backdrop-blur-sm text-white/50 hover:bg-white/10 hover:text-white transition-all transform hover:scale-110 active:scale-95 border border-white/5"
+                aria-label="Previous Poem"
+            >
+                <ChevronLeft className="w-8 h-8 md:w-10 md:h-10" />
+            </button>
+
+            <button
+                onClick={handleNext}
+                className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 p-4 rounded-full bg-white/5 backdrop-blur-sm text-white/50 hover:bg-white/10 hover:text-white transition-all transform hover:scale-110 active:scale-95 border border-white/5"
+                aria-label="Next Poem"
+            >
+                <ChevronRight className="w-8 h-8 md:w-10 md:h-10" />
+            </button>
+
             {/* Main Carousel Container */}
             <div className="relative w-full h-full max-w-md flex flex-col items-center justify-center p-4">
-
-                {/* Navigation Arrows (Absolute) */}
-                <button
-                    onClick={handlePrev}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-all transform hover:scale-110"
-                >
-                    <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
-                </button>
-
-                <button
-                    onClick={handleNext}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 z-50 p-3 rounded-full bg-white/10 backdrop-blur-sm text-white/70 hover:bg-white/20 hover:text-white transition-all transform hover:scale-110"
-                >
-                    <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
-                </button>
 
                 <AnimatePresence mode="wait">
                     <motion.div
@@ -72,7 +75,7 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
                         drag="x"
                         dragConstraints={{ left: 0, right: 0 }}
                         onDragEnd={onDragEnd}
-                        className="w-full px-2" // Added padding to clear arrows
+                        className="w-full px-2"
                     >
                         <LetterCard
                             poem={rawPoems[activeIndex]}
@@ -83,7 +86,7 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
                 </AnimatePresence>
 
                 {/* Dots Indicator */}
-                <div className="absolute bottom-6 flex gap-2">
+                <div className="absolute bottom-8 flex gap-2">
                     {rawPoems.map((_, i) => (
                         <div
                             key={i}
@@ -92,6 +95,16 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
                         />
                     ))}
                 </div>
+
+                {/* Swipe Instruction */}
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 0.6, y: 0 }}
+                    transition={{ delay: 1, duration: 1 }}
+                    className="absolute bottom-2 text-white/40 text-xs font-sans tracking-widest uppercase"
+                >
+                    Swipe to read next letter
+                </motion.div>
             </div>
         </div>
     )
@@ -149,14 +162,6 @@ function LetterCard({ poem, index, total }: { poem: any, index: number, total: n
                                 <Mail className="w-6 h-6 text-red-700" />
                                 <span className="text-[6px] font-bold text-red-900 mt-1 uppercase tracking-wider">Air Post</span>
                             </div>
-                        </div>
-
-                        {/* Wavy Postmark over title/stamps */}
-                        <div className="absolute right-8 top-4 opacity-40 pointer-events-none">
-                            <svg width="100" height="40" viewBox="0 0 100 40" className="text-black">
-                                <path d="M0,20 Q10,0 20,20 T40,20 T60,20 T80,20 T100,20" fill="none" stroke="currentColor" strokeWidth="1" />
-                                <path d="M0,30 Q10,10 20,30 T40,30 T60,30 T80,30 T100,30" fill="none" stroke="currentColor" strokeWidth="1" />
-                            </svg>
                         </div>
                     </div>
 
