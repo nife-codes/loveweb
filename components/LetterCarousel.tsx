@@ -30,7 +30,7 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1a0f0f] overflow-hidden font-sans">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#1a0f0f] overflow-hidden font-sans overscroll-none touch-none">
 
             {/* Background Texture/Gradient */}
             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/aged-paper.png')] pointer-events-none" />
@@ -77,24 +77,17 @@ export default function LetterCarousel({ onBack }: LetterCarouselProps) {
                         onDragEnd={onDragEnd}
                         className="w-full px-2"
                     >
-// ... imports
-import { useRef } from "react" 
-// Ensure useRef is imported
-
-// ... LetterCarousel component ...
-
-// Inside LetterCarousel return:
-// ...
-                        <LetterCard 
-                            poem={rawPoems[activeIndex]} 
-                            index={activeIndex} 
-                            total={count} 
+                        <LetterCard
+                            poem={rawPoems[activeIndex]}
+                            index={activeIndex}
+                            total={count}
                             onSwipeDown={onBack}
                         />
-// ...
+                    </motion.div>
+                </AnimatePresence>
 
-// Bottom text:
-                <motion.div 
+                {/* Bottom text: */}
+                <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 0.6, y: 0 }}
                     transition={{ delay: 1, duration: 1 }}
@@ -132,12 +125,12 @@ function LetterCard({ poem, index, total, onSwipeDown }: { poem: any, index: num
 
     return (
         <div className="relative w-full p-4 flex items-center justify-center">
-            
+
             {/* Shadow Container */}
             <div className="relative w-full bg-[#fdfbf7] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] transform rotate-0 transition-transform hover:scale-[1.01] duration-500">
-                
+
                 {/* Scalloped Edge Mask */}
-                <div 
+                <div
                     className="absolute inset-0 bg-[#fdfbf7] -z-10"
                     style={{
                         maskImage: "radial-gradient(circle, transparent 6px, black 6.5px)",
@@ -150,23 +143,23 @@ function LetterCard({ poem, index, total, onSwipeDown }: { poem: any, index: num
                         WebkitMaskRepeat: "repeat",
                     }}
                 />
-                
+
                 {/* Main Card Content with Touch Listeners */}
-                <div 
+                <div
                     ref={scrollRef}
                     onTouchStart={onTouchStart}
                     onTouchEnd={onTouchEnd}
-                    className="relative z-10 w-full h-full p-6 md:p-10 flex flex-col gap-6 min-h-[60vh] max-h-[75vh] overflow-y-auto no-scrollbar bg-[#fdfbf7]"
+                    className="relative z-10 w-full h-full p-6 md:p-10 flex flex-col gap-6 min-h-[60vh] max-h-[75vh] overflow-y-auto no-scrollbar bg-[#fdfbf7] overscroll-contain touch-pan-y"
                 >
-                    
+
                     {/* Paper Texture Overlay */}
                     <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] pointer-events-none" />
 
                     {/* Header Section */}
                     <div className="relative border-b-2 border-double border-red-900/20 pb-4 flex justify-between items-start shrink-0">
-                        
+
                         <div className="flex flex-col gap-2">
-                             {/* Decorative header text */}
+                            {/* Decorative header text */}
                             <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#8b0000] tracking-widest uppercase" style={{ fontFamily: "Georgia, serif" }}>
                                 A Love Poem
                             </h1>
@@ -176,15 +169,15 @@ function LetterCard({ poem, index, total, onSwipeDown }: { poem: any, index: num
 
                         {/* Postage Stamps */}
                         <div className="flex gap-2 transform rotate-2">
-                             <div className="w-14 h-16 bg-[#e8dac9] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
+                            <div className="w-14 h-16 bg-[#e8dac9] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group">
                                 <Heart className="w-6 h-6 text-red-700 fill-red-700/20" />
                                 <span className="text-[6px] font-bold text-red-900 mt-1 uppercase tracking-wider">Love Mail</span>
                                 <div className="absolute -right-2 -bottom-2 opacity-30 text-[8px] font-mono text-black rotate-[-45deg]">14 CENTS</div>
-                             </div>
-                             <div className="w-14 h-16 bg-[#fae3e3] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden -rotate-6 mt-1">
+                            </div>
+                            <div className="w-14 h-16 bg-[#fae3e3] border-[3px] border-dotted border-red-800/40 p-1 shadow-sm flex flex-col items-center justify-center relative overflow-hidden -rotate-6 mt-1">
                                 <Mail className="w-6 h-6 text-red-700" />
                                 <span className="text-[6px] font-bold text-red-900 mt-1 uppercase tracking-wider">Air Post</span>
-                             </div>
+                            </div>
                         </div>
                     </div>
 
@@ -225,11 +218,11 @@ function LetterCard({ poem, index, total, onSwipeDown }: { poem: any, index: num
 
                         {/* Circular Postmark */}
                         <div className="absolute right-0 bottom-0 opacity-70 transform rotate-[-15deg]">
-                            <div className="w-20 h-20 rounded-full border-2 border-red-900/30 flex items-center justify-center p-1">
+                            <div className="w-24 h-24 rounded-full border-2 border-red-900/30 flex items-center justify-center p-1">
                                 <div className="w-full h-full rounded-full border border-red-900/20 border-dashed flex flex-col items-center justify-center text-red-900/80 font-mono text-[10px]">
-                                    <span className="uppercase tracking-widest text-[8px]">Love City</span>
-                                    <span className="text-lg font-bold my-0.5">FEB 14</span>
-                                    <span>2026</span>
+                                    <span className="uppercase tracking-widest text-[8px] whitespace-nowrap">Love City</span>
+                                    <span className="text-lg font-bold my-0.5 whitespace-nowrap">FEB 14</span>
+                                    <span className="whitespace-nowrap">2026</span>
                                     <div className="w-full h-px bg-red-900/20 absolute top-1/2 -translate-y-1/2" />
                                 </div>
                             </div>
