@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import SwipeIndicator from "./SwipeIndicator";
 
@@ -36,33 +37,50 @@ const letterLines = [
 ];
 
 const LoveLetter = ({ onSwipeUp, onSwipeDown }: LoveLetterProps) => {
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.deltaY > 30) onSwipeUp();
-    if (e.deltaY < -30) onSwipeDown();
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Minimum swipe distance
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null); // Reset
+    setTouchStart(e.targetTouches[0].clientY);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const startY = e.touches[0].clientY;
-    const el = e.currentTarget as HTMLElement;
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
 
-    const handleTouchEnd = (ev: any) => {
-      const endY = ev.changedTouches[0].clientY;
-      const deltaY = startY - endY;
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
 
-      if (deltaY > 50) onSwipeUp(); // Swipe up
-      if (deltaY < -50) onSwipeDown(); // Swipe down
+    const distance = touchStart - touchEnd;
+    const isSwipeUp = distance > minSwipeDistance;
+    const isSwipeDown = distance < -minSwipeDistance;
 
-      el.removeEventListener("touchend", handleTouchEnd);
-    };
+    if (isSwipeUp) {
+      onSwipeUp();
+    }
 
-    el.addEventListener("touchend", handleTouchEnd);
+    if (isSwipeDown) {
+      onSwipeDown();
+    }
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    // Debounce or threshold
+    if (e.deltaY > 20) onSwipeUp();
+    if (e.deltaY < -20) onSwipeDown();
   };
 
   return (
     <motion.div
       className="h-screen w-full flex flex-col items-center justify-between py-8 px-6 paper-texture overflow-hidden"
       onWheel={handleWheel}
-      onTouchStart={handleTouchStart}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, y: -60 }}
@@ -83,12 +101,12 @@ const LoveLetter = ({ onSwipeUp, onSwipeDown }: LoveLetterProps) => {
             <motion.p
               key={i}
               className={`font-display text-ink leading-relaxed ${i === 0
-                  ? "text-xl md:text-2xl italic mb-3"
-                  : line === ""
-                    ? "h-3"
-                    : i >= letterLines.length - 2
-                      ? "text-base italic mt-2"
-                      : "text-base md:text-lg"
+                ? "text-xl md:text-2xl italic mb-3"
+                : line === ""
+                  ? "h-3"
+                  : i >= letterLines.length - 2
+                    ? "text-base italic mt-2"
+                    : "text-base md:text-lg"
                 }`}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}

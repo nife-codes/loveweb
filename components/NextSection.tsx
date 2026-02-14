@@ -1,38 +1,55 @@
 "use client"
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Camera, Mail } from "lucide-react";
 
 interface NextSectionProps {
   onSwipeDown: () => void;
+  onLetterClick: () => void;
+  onCameraClick: () => void;
 }
 
-const NextSection = ({ onSwipeDown }: NextSectionProps) => {
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.deltaY < -30) onSwipeDown();
+const NextSection = ({ onSwipeDown, onLetterClick, onCameraClick }: NextSectionProps) => {
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Minimum swipe distance
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null); // Reset
+    setTouchStart(e.targetTouches[0].clientY);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const startY = e.touches[0].clientY;
-    const el = e.currentTarget as HTMLElement;
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
 
-    const handleTouchEnd = (ev: any) => {
-      const endY = ev.changedTouches[0].clientY;
-      const deltaY = startY - endY;
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
 
-      if (deltaY < -50) onSwipeDown(); // Swipe down
+    const distance = touchStart - touchEnd;
+    const isSwipeUp = distance > minSwipeDistance;
+    const isSwipeDown = distance < -minSwipeDistance;
 
-      el.removeEventListener("touchend", handleTouchEnd);
-    };
+    // NextSection mainly needs swipe down to go back
+    if (isSwipeDown) {
+      onSwipeDown();
+    }
+  };
 
-    el.addEventListener("touchend", handleTouchEnd);
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.deltaY < -20) onSwipeDown();
   };
 
   return (
     <motion.div
       className="min-h-screen flex flex-col items-center justify-center px-6 bg-background"
       onWheel={handleWheel}
-      onTouchStart={handleTouchStart}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1, ease: "easeInOut" }}
@@ -51,27 +68,23 @@ const NextSection = ({ onSwipeDown }: NextSectionProps) => {
           <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            onClick={onCameraClick}
             className="flex flex-col items-center gap-3 cursor-pointer group"
           >
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-paper flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-border">
-              <Camera className="w-8 h-8 md:w-10 md:h-10 text-ink/80 group-hover:text-primary transition-colors duration-300" strokeWidth={1.5} />
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-paper flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-500 border border-border group-hover:bg-secondary group-hover:border-secondary">
+              <Camera className="w-8 h-8 md:w-10 md:h-10 text-ink/80 group-hover:text-paper transition-colors duration-500" strokeWidth={1.5} />
             </div>
-            <span className="font-body text-sm tracking-widest uppercase text-muted-foreground group-hover:text-primary transition-colors duration-300">
-              Photos
-            </span>
           </motion.div>
 
           <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            onClick={onLetterClick}
             className="flex flex-col items-center gap-3 cursor-pointer group"
           >
-            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-paper flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 border border-border">
-              <Mail className="w-8 h-8 md:w-10 md:h-10 text-ink/80 group-hover:text-primary transition-colors duration-300" strokeWidth={1.5} />
+            <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-paper flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-500 border border-border group-hover:bg-secondary group-hover:border-secondary">
+              <Mail className="w-8 h-8 md:w-10 md:h-10 text-ink/80 group-hover:text-paper transition-colors duration-500" strokeWidth={1.5} />
             </div>
-            <span className="font-body text-sm tracking-widest uppercase text-muted-foreground group-hover:text-primary transition-colors duration-300">
-              Letter
-            </span>
           </motion.div>
         </div>
       </motion.div>
