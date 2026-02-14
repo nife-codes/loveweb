@@ -20,7 +20,35 @@ interface SpatialGalleryProps {
 export function SpatialGallery({ items, onBack }: SpatialGalleryProps) {
     const [activeIndex, setActiveIndex] = useState(0)
 
+    // Touch state
+    const [touchStart, setTouchStart] = useState<number | null>(null)
+    const [touchEnd, setTouchEnd] = useState<number | null>(null)
+
     const count = items.length
+
+    const minSwipeDistance = 50
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null)
+        setTouchStart(e.targetTouches[0].clientX)
+    }
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX)
+    }
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return
+        const distance = touchStart - touchEnd
+        const isLeftSwipe = distance > minSwipeDistance
+        const isRightSwipe = distance < -minSwipeDistance
+
+        if (isLeftSwipe) {
+            handleNext()
+        } else if (isRightSwipe) {
+            handlePrev()
+        }
+    }
 
     const handleNext = () => {
         setActiveIndex((prev) => (prev + 1) % count)
@@ -42,38 +70,45 @@ export function SpatialGallery({ items, onBack }: SpatialGalleryProps) {
     }, [])
 
     return (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center font-sans overflow-hidden">
+        <div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center font-sans overflow-hidden"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+        >
 
             {/* Background Image - Brown */}
             <div className="absolute inset-0 z-0">
                 <img
                     src="/gallery/brown.jpg"
                     alt="Background"
-                    className="w-full h-full object-cover opacity-100" // Ensure visibility
+                    className="w-full h-full object-cover opacity-100"
                 />
-                <div className="absolute inset-0 bg-black/20" /> {/* Slight overlay for contrast */}
+                <div className="absolute inset-0 bg-black/20" />
             </div>
 
             {/* Main Content Area */}
             <div className="relative z-10 w-full h-full max-w-7xl flex flex-col items-center justify-center p-4">
 
-                {/* Top Bar - 60% Width, 50px Height */}
+                {/* Top Bar - Responsive Width */}
                 <motion.div
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.6 }}
-                    style={{ width: "60%", height: "50px" }}
-                    className="flex-none flex items-center justify-between px-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg"
+                    // Widen on mobile (90%), fixed on desktop (60%)
+                    className="flex-none flex items-center justify-between px-4 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg w-[90%] md:w-[60%] h-[50px]"
                 >
-                    <div className="flex items-center gap-3">
-                        <button onClick={onBack} className="p-1.5 rounded-full hover:bg-white/20 transition-colors text-white/90">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <button onClick={onBack} className="flex-none p-1.5 rounded-full hover:bg-white/20 transition-colors text-white/90">
                             <X className="w-4 h-4" />
                         </button>
-                        <div className="h-3 w-px bg-white/20" />
-                        <span className="text-xs font-medium text-white/80 tracking-wide uppercase truncate">My favorite media of you</span>
+                        <div className="flex-none h-3 w-px bg-white/20" />
+                        <span className="text-[10px] md:text-xs font-medium text-white/80 tracking-wide uppercase truncate">
+                            My favorite media of you
+                        </span>
                     </div>
 
-                    <div className="flex gap-1.5">
+                    <div className="flex-none flex gap-1.5 ml-3">
                         <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                         <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
@@ -121,15 +156,15 @@ export function SpatialGallery({ items, onBack }: SpatialGalleryProps) {
                                 >
                                     <div
                                         className={`
-                            relative 
-                            w-[210px] md:w-[280px] 
-                            aspect-[4/5] 
-                            rounded-[20px] 
-                            overflow-hidden 
-                            bg-white/5 backdrop-blur-md border border-white/20 shadow-2xl
-                            cursor-pointer
-                            transition-all duration-300
-                        `}
+                                relative 
+                                w-[210px] md:w-[280px] 
+                                aspect-[4/5] 
+                                rounded-[20px] 
+                                overflow-hidden 
+                                bg-white/5 backdrop-blur-md border border-white/20 shadow-2xl
+                                cursor-pointer
+                                transition-all duration-300
+                            `}
                                         onClick={() => {
                                             if (!isActive) {
                                                 const newIndex = ((activeIndex + offset) % count + count) % count
@@ -148,8 +183,6 @@ export function SpatialGallery({ items, onBack }: SpatialGalleryProps) {
                                                     loop
                                                     muted
                                                     playsInline
-                                                    // Removed 'autoplay' from attribute to rely on logic, 
-                                                    // but user requested it. Logic below handles play/pause better for carousel.
                                                     ref={el => {
                                                         if (el) {
                                                             if (isActive) {
@@ -197,13 +230,13 @@ export function SpatialGallery({ items, onBack }: SpatialGalleryProps) {
                 {/* Spacer - 30px */}
                 <div style={{ height: "30px" }} className="flex-none" />
 
-                {/* Bottom Bar - 70% Width, 60px Height */}
+                {/* Bottom Bar - Responsive Width */}
                 <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.6 }}
-                    style={{ width: "70%", height: "60px" }}
-                    className="flex-none flex items-center justify-between px-6 rounded-[24px] bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg"
+                    // Widen on mobile
+                    className="flex-none flex items-center justify-between px-6 rounded-[24px] bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg w-[95%] md:w-[70%] h-[60px]"
                 >
                     <button onClick={handlePrev} className="p-2 rounded-full hover:bg-white/10 transition-colors text-white">
                         <ChevronLeft className="w-5 h-5" />
