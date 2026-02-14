@@ -21,7 +21,7 @@ import { X } from "lucide-react"
 */
 
 const FLIP_MS = 700
-const LINES_PER_PAGE = 24
+
 
 interface BookPageData extends PoemPage {
     variant: "title" | "poem" | "end" | "empty"
@@ -34,6 +34,9 @@ interface PoetryBookProps {
 
 export default function PoetryBook({ onBack }: PoetryBookProps) {
     const isMobile = useIsMobile()
+
+    // Adjust lines per page based on device to prevent overflow
+    const linesPerPage = isMobile ? 12 : 20
 
     // Generate pages dynamically
     const pages = useMemo(() => {
@@ -69,11 +72,11 @@ export default function PoetryBook({ onBack }: PoetryBookProps) {
 
                 // Determine if we need to break page automatically (fallback)
                 // Logic: 
-                // - If currentLines is full (LINES_PER_PAGE)
+                // - If currentLines is full (linesPerPage)
                 // - Don't start a page with an empty line (stanza break) unless it's unavoidable?
                 //   Actually, just skipping leading empty lines on new page is better.
 
-                if (currentLines.length >= LINES_PER_PAGE) {
+                if (currentLines.length >= linesPerPage) {
                     generated.push({
                         lines: [...currentLines],
                         pageNumber: pageNum++,
@@ -108,12 +111,6 @@ export default function PoetryBook({ onBack }: PoetryBookProps) {
         // We want Finis at an Even index.
         // If length is Odd (next index is Odd/Left), add a Blank page first.
 
-        // 3. Ensure "Finis" page lands on a Front Face (Right side).
-        // Front Faces are at Even indices in 'generated' array (0, 2, 4...).
-        // Valid indices: 0 (Sheet 1 Front), 1 (Sheet 1 Back), 2 (Sheet 2 Front)...
-        // We want Finis at an Even index.
-        // If length is Odd (next index is Odd/Left), add a Blank page first.
-
         if (generated.length % 2 !== 0) {
             generated.push({
                 lines: [],
@@ -132,12 +129,19 @@ export default function PoetryBook({ onBack }: PoetryBookProps) {
         })
 
         return generated
-    }, [])
+    }, [isMobile, linesPerPage]) // Re-generate when device changes
 
     const TOTAL_SHEETS = 1 + Math.ceil(pages.length / 2)
 
     const [flippedCount, setFlippedCount] = useState(0)
     const [isFlipping, setIsFlipping] = useState(false)
+
+    // Reset loop if pages change significantly? 
+    // Actually framer or React might complain if flippedCount > total.
+    // Let's safe-guard it.
+    if (flippedCount > TOTAL_SHEETS) {
+        setFlippedCount(0)
+    }
 
     const isClosed = flippedCount === 0
     const isAllOpen = flippedCount === TOTAL_SHEETS

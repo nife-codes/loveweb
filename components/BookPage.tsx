@@ -84,28 +84,25 @@ export function BookPageContent({
                 )}
 
                 {variant === "poem" && page && (
-                    <div className="w-full flex flex-col gap-0 px-2 md:px-0">
+                    <div className="flex flex-col items-center gap-0">
                         {page.lines.map((line, i) => {
                             // Specialized styling for denser poems
                             const isConfession = (page as any)?.poemTitle === "The Confession"
                             const isMediumPage = page.pageNumber === 4 || page.pageNumber === 5
 
-                            // User requested: Clean serif, proper line-height, no overlap, left align, proper contrast
-                            let textClass = "font-serif tracking-wide text-[hsl(24,40%,15%)] text-left " // Darker text, left align
-
+                            let textClass = "text-center font-serif tracking-wide text-[hsl(24,30%,20%)] "
                             if (isMediumPage) {
-                                textClass += "text-[13px] leading-[1.8] md:text-sm md:leading-loose"
+                                textClass += "text-[11px] leading-snug md:text-sm md:leading-relaxed"
                             } else if (isConfession) {
-                                textClass += "text-[12px] leading-[1.7] md:text-xs md:leading-relaxed"
+                                textClass += "text-[10px] leading-[1.3] md:text-xs md:leading-relaxed"
                             } else {
-                                // Default comfortable reading size
-                                textClass += "text-sm leading-[1.8] md:text-base md:leading-loose"
+                                textClass += "text-xs leading-snug md:text-base md:leading-relaxed"
                             }
 
                             return (
                                 <p
                                     key={i}
-                                    className={`${textClass} ${line === "" ? (isConfession ? "h-2" : "h-4") : "mb-1"}`}
+                                    className={`${textClass} ${line === "" ? (isConfession ? "h-1.5" : "h-2") : ""}`}
                                 >
                                     {line || "\u00A0"}
                                 </p>
