@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { rawPoems, bookMetadata, PAGE_BREAK } from "@/lib/poems"
 import { X, Heart, Mail, ChevronLeft, ChevronRight } from "lucide-react"
